@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Juego interactivo para relacionar conceptos de computación en la nube."><meta name="theme-color" content="#06192f">
+  <title>Conecta la Nube · Juego de conceptos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="game.css">
+</head>
+<body>
+  <a class="skip" href="#game">Saltar al juego</a>
+  <header class="game-nav"><a href="index.html" class="back">← Volver al manual</a><a class="game-brand" href="#"><span>CN</span> Conecta la Nube</a><button id="soundBtn" aria-pressed="true" title="Activar o desactivar sonidos">Sonido: sí</button></header>
+  <main id="game">
+    <section class="start-screen" id="startScreen">
+      <div class="hero-copy"><div class="eyebrow">JUEGO DE RELACIÓN · 7 NIVELES</div><h1>Conecta las palabras.<br><em>Entiende la nube.</em></h1><p>Selecciona un concepto y después su explicación correcta. Cada acierto incluye un ejemplo para ayudarte a recordarlo.</p><div class="mode-box"><span>ELIGE UN MODO</span><div><button class="mode active" data-mode="learn"><b>Aprender</b><small>Sin tiempo y con pistas</small></button><button class="mode" data-mode="challenge"><b>Reto</b><small>75 segundos por nivel</small></button></div></div><div class="start-actions"><button class="primary" id="startBtn">Comenzar el nivel 1 →</button><button class="secondary" id="levelsBtn">Elegir nivel</button></div><p class="saved" id="savedMessage"></p></div>
+      <aside class="cloud-map"><div class="orbit o1">IaaS</div><div class="orbit o2">PaaS</div><div class="orbit o3">SaaS</div><div class="cloud-core">☁<b>NUBE</b><small>42 conceptos</small></div><div class="orbit o4">Azure</div><div class="orbit o5">AWS</div><div class="orbit o6">Google</div></aside>
+    </section>
+
+    <section class="level-picker" id="levelPicker" hidden><div class="picker-head"><div><span>MAPA DE APRENDIZAJE</span><h2>Elige un nivel</h2><p>Puedes repetir cualquier nivel. Te recomendamos avanzar en orden.</p></div><button class="close-picker" id="closePicker">×</button></div><div class="level-grid" id="levelGrid"></div></section>
+
+    <section class="play-screen" id="playScreen" hidden>
+      <div class="play-top"><div><span id="levelCounter">NIVEL 1 DE 7</span><h2 id="levelTitle">Fundamentos</h2><p id="levelDescription"></p></div><div class="stats"><div><small>PUNTOS</small><b id="score">0</b></div><div><small>RACHA</small><b id="streak">0</b></div><div><small>INTENTOS</small><b id="attempts">0</b></div><div id="timerBox"><small>TIEMPO</small><b id="timer">∞</b></div></div></div>
+      <div class="progress"><i id="levelProgress"></i></div>
+      <div class="instruction"><b>¿Cómo jugar?</b> Primero selecciona una tarjeta azul de la izquierda. Después selecciona la explicación que le corresponde.</div>
+      <div class="board"><section><h3>Conceptos</h3><div class="cards terms" id="terms"></div></section><section><h3>Explicaciones</h3><div class="cards definitions" id="definitions"></div></section></div>
+      <div class="game-tools"><button id="hintBtn">💡 Usar una pista <small>−10 puntos</small></button><button id="resetLevelBtn">↻ Mezclar de nuevo</button><button id="exitBtn">Salir del nivel</button></div>
+      <div class="feedback" id="feedback" role="status" aria-live="polite"><span>Selecciona un concepto para comenzar.</span></div>
+    </section>
+
+    <section class="level-complete" id="levelComplete" hidden><div class="result-icon">✓</div><span>NIVEL COMPLETADO</span><h2 id="completeTitle">¡Buen trabajo!</h2><p id="completeText"></p><div class="result-stats"><div><small>PUNTOS DEL NIVEL</small><b id="levelScore">0</b></div><div><small>ACIERTOS DIRECTOS</small><b id="accuracy">0%</b></div><div><small>MEJOR RACHA</small><b id="bestStreak">0</b></div></div><div class="learned" id="learned"></div><div class="result-actions"><button class="primary" id="nextBtn">Siguiente nivel →</button><button class="secondary" id="repeatBtn">Repetir nivel</button></div></section>
+
+    <section class="final-screen" id="finalScreen" hidden><div class="trophy">🏆</div><span>MISIÓN COMPLETADA</span><h2>¡Ya puedes hablar el idioma de la nube!</h2><p>Terminaste los siete niveles. Ahora puedes reconocer conceptos, modelos, proveedores, servicios y prácticas básicas de seguridad.</p><div class="final-score"><small>PUNTUACIÓN TOTAL</small><b id="finalScore">0</b><span id="rank">Explorador de la nube</span></div><div class="mastery" id="mastery"></div><div class="review-box" id="reviewBox"><h3>Conceptos para repasar</h3><div id="reviewList"></div></div><div class="result-actions"><button class="primary" id="playAgainBtn">Jugar otra vez</button><a class="secondary link" href="index.html">Volver al manual</a></div></section>
+  </main>
+  <footer><p>Juego educativo · Los nombres comerciales pertenecen a sus respectivos propietarios.</p><div><a href="https://learn.microsoft.com/es-es/training/modules/describe-cloud-service-types/" target="_blank" rel="noopener">Fuente: Microsoft Learn ↗</a></div></footer>
+  <script src="game.js"></script>
+</body></html>

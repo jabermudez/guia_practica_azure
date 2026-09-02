@@ -1,12 +1,12 @@
 # Azure for Students · Manual completo
 
-Manual web estático para principiantes, centrado en la activación de Azure for Students, control del crédito, conceptos fundamentales, configuración de ocho servicios, ejercicios y evaluación.
+Manual web estático para principiantes, centrado en Azure for Students, control del crédito, conceptos fundamentales y configuración guiada de servicios. Incluye laboratorios completos con Windows Server 2022 e IIS, Ubuntu Server 24.04 LTS y NGINX, acceso remoto seguro, publicación web por IP, seguridad de red, respaldo, monitoreo y ejercicios.
 
 ## Publicación en GitHub Pages
 
-1. Suba `index.html`, `styles.css`, `details.css`, `easy.css`, `corrections.css` y `script.js` a la raíz de un repositorio.
+1. Suba todos los archivos de esta carpeta a la raíz del repositorio. Asegúrese de incluir `advanced.css`, `juego.html`, `game.css` y `game.js`.
 2. En GitHub abra **Settings → Pages**.
 3. En **Build and deployment**, seleccione **Deploy from a branch**.
 4. Elija la rama principal, carpeta `/ (root)` y pulse **Save**.
 
-No requiere instalación, compilación ni servidor. El progreso de las actividades se guarda localmente en el navegador del aprendiz.
+No requiere instalación, compilación ni servidor. El progreso del manual y del juego se guarda localmente en el navegador del aprendiz.
