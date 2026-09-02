@@ -1,6 +1,6 @@
 # Azure for Students · Manual completo
 
-Manual web estático para principiantes, centrado en Azure for Students, control del crédito, conceptos fundamentales y configuración guiada de servicios. Incluye laboratorios completos con Windows Server 2022 e IIS, Ubuntu Server 24.04 LTS y NGINX, acceso remoto seguro, publicación web por IP, seguridad de red, respaldo, monitoreo y ejercicios.
+Manual web estático para principiantes, centrado en Azure for Students, control del crédito, conceptos fundamentales y configuración guiada de servicios. Incluye laboratorios completos con Windows Server 2022 e IIS, Ubuntu Server 24.04 LTS y NGINX, acceso remoto seguro, transferencia de sitios por SFTP con Cyberduck, publicación web por IP, seguridad de red, respaldo, monitoreo y ejercicios.
 
 ## Publicación en GitHub Pages
 
