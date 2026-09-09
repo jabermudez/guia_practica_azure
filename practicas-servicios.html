@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Ocho prácticas complementarias de Azure para estudiantes, explicadas paso a paso con el portal en español.">
+  <meta name="theme-color" content="#071a33">
+  <title>Prácticas complementarias de Azure · Manual para estudiantes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="practicas-servicios.css">
+</head>
+<body>
+  <a class="skip" href="#contenido">Saltar al contenido</a>
+  <header class="lab-nav">
+    <a class="brand" href="index.html"><span class="brand-mark">A</span><span>Azure <small>laboratorios complementarios</small></span></a>
+    <nav aria-label="Navegación principal"><a href="index.html">Manual principal</a><a href="#ruta">Ruta</a><a href="#lab-storage">Comenzar</a><a href="#proyecto-final">Proyecto final</a></nav>
+    <div class="nav-tools"><button id="printGuide">Imprimir</button><button class="progress-button" id="progressButton"><b id="progressValue">0%</b> <span>completado</span></button><button id="theme" aria-label="Cambiar tema">◐</button></div>
+  </header>
+
+  <main id="contenido">
+    <section class="lab-hero">
+      <div class="hero-grid">
+        <div>
+          <div class="eyebrow">CONTINUACIÓN DEL MANUAL · APRENDER HACIENDO</div>
+          <h1>Ocho prácticas para <em>conectar Azure.</em></h1>
+          <p class="lead">Ya creaste máquinas virtuales, te conectaste a Windows Server y publicaste una página con NGINX. Ahora aprenderás a guardar archivos, publicar desde GitHub, trabajar con datos, crear una API, vigilar recursos, proteger secretos, hacer respaldos y asignar permisos.</p>
+          <div class="hero-actions"><a class="button" href="#lab-storage">Iniciar la práctica 1 ↓</a><a class="button secondary" href="index.html">← Volver al manual principal</a></div>
+        </div>
+        <aside class="hero-panel">
+          <div class="eyebrow">CÓMO USAR ESTE MÓDULO</div>
+          <h2>Una práctica a la vez</h2>
+          <p>No es necesario crear todos los servicios el mismo día. Completa, comprueba, guarda las evidencias y limpia los recursos antes de avanzar.</p>
+          <ul><li>Todos los nombres del portal están indicados en español.</li><li>Las opciones que pueden generar costo están advertidas.</li><li>Las marcas de avance se guardan solo en este navegador.</li></ul>
+        </aside>
+      </div>
+      <div class="route-strip" id="ruta">
+        <div class="route-card"><span>ETAPA 1</span><b>Archivos y publicación</b><small>Storage + Static Web Apps</small></div>
+        <div class="route-card"><span>ETAPA 2</span><b>Datos y programación</b><small>SQL Database + Functions</small></div>
+        <div class="route-card"><span>ETAPA 3</span><b>Control y seguridad</b><small>Monitor + Key Vault</small></div>
+        <div class="route-card"><span>ETAPA 4</span><b>Continuidad y permisos</b><small>Backup + RBAC</small></div>
+      </div>
+    </section>
+
+    <section class="preflight">
+      <div class="section-title"><div><span class="section-label">ANTES DE CREAR RECURSOS</span><h2>Prepara el laboratorio</h2></div><p>Estas reglas evitan bloqueos y ayudan a conservar el crédito estudiantil. Léelas al inicio de cada sesión.</p></div>
+      <div class="preflight-grid">
+        <article class="preflight-card"><h3>Cuenta y portal</h3><ul><li>Suscripción <b>Azure for Students</b> activa.</li><li>Portal configurado en español.</li><li>Presupuesto y alertas de costo creados.</li><li>Acceso a tu correo y a GitHub.</li></ul></article>
+        <article class="preflight-card"><h3>Reglas para los nombres</h3><p>Reemplaza <code>apellido</code> por tu apellido sin espacios. Cuando Azure exija un nombre mundialmente único, agrega cuatro números.</p><p>Ejemplo: <code>stlabbermudez4821</code>.</p></article>
+        <article class="preflight-card"><h3>Una carpeta por actividad</h3><p>Crea un grupo de recursos diferente por práctica. Esto permite reconocer y eliminar todo lo que pertenece a una actividad.</p><p>Ejemplo: <code>rg-lab-storage</code>.</p></article>
+      </div>
+      <div class="budget-banner"><span>⚠</span><p><b>Regla de seguridad económica:</b> antes de seleccionar <b>Crear</b>, revisa el resumen de costo. Si aparece un valor que no comprendes, detente y consulta al instructor. Un presupuesto avisa, pero no apaga ni elimina recursos.</p></div>
+    </section>
+
+    <div class="guide-shell">
+      <aside class="side-index">
+        <span>ÍNDICE PRÁCTICO</span>
+        <h2>Laboratorios</h2>
+        <a href="#lab-storage"><b>01</b> Blob Storage y SAS</a>
+        <a href="#lab-static"><b>02</b> Static Web Apps</a>
+        <a href="#lab-sql"><b>03</b> Azure SQL Database</a>
+        <a href="#lab-functions"><b>04</b> Azure Functions</a>
+        <a href="#lab-monitor"><b>05</b> Azure Monitor</a>
+        <a href="#lab-keyvault"><b>06</b> Azure Key Vault</a>
+        <a href="#lab-backup"><b>07</b> Azure Backup</a>
+        <a href="#lab-rbac"><b>08</b> Permisos RBAC</a>
+        <div class="side-progress"><div><i id="sideProgressBar"></i></div><p id="sideProgressText">0 comprobaciones</p></div>
+      </aside>
+
+      <div class="guide-content">
+        <section class="lab-section" id="lab-storage">
+          <header class="lab-head"><div class="lab-number">01</div><div><h2>Azure Blob Storage y enlaces SAS</h2><p>Guarda archivos privados y aprende a compartir uno durante un tiempo limitado.</p></div></header>
+          <div class="lab-body">
+            <div class="meta-row"><div class="meta"><small>DIFICULTAD</small><b>Básica</b></div><div class="meta"><small>TIEMPO</small><b>45–60 minutos</b></div><div class="meta"><small>COSTO</small><b>Muy bajo</b></div><div class="meta"><small>GRUPO</small><b>rg-lab-storage</b></div></div>
+
+            <div class="concept-grid">
+              <article class="analogy-card"><h3>Piensa en un casillero</h3><p>La cuenta de almacenamiento es el edificio; el contenedor es un casillero y cada blob es un archivo guardado. Si el casillero es privado, nadie puede abrirlo sin una llave autorizada.</p></article>
+              <article class="concept-card"><h3>¿Qué problema resuelve?</h3><p>Permite guardar imágenes, PDF, videos, respaldos y otros archivos sin depender del disco de una máquina virtual. Los archivos permanecen aunque la VM esté apagada.</p></article>
+            </div>
+            <div class="term-list">
+              <div class="term"><b>Blob</b><span>Archivo almacenado como un objeto.</span></div>
+              <div class="term"><b>Contenedor</b><span>Grupo lógico donde se organizan blobs.</span></div>
+              <div class="term"><b>LRS</b><span>Azure conserva copias dentro de un mismo centro de datos.</span></div>
+              <div class="term"><b>SAS</b><span>Dirección con permisos y vencimiento limitados.</span></div>
+            </div>
+            <div class="flow" aria-label="Flujo de acceso a un blob"><div><b>Computador</b><small>Carga el archivo</small></div><i>→</i><div><b>Contenedor privado</b><small>Rechaza visitantes</small></div><i>→</i><div><b>URL con SAS</b><small>Permite lectura temporal</small></div></div>
+
+            <article class="phase">
+              <span>FASE A · PREPARAR EL ARCHIVO</span><h3>Crea una evidencia pequeña</h3>
+              <ol class="steps"><li>En Windows abre <b>Bloc de notas</b>.</li><li>Escribe tu nombre, la fecha y la frase: “Este archivo está almacenado en Azure Blob Storage”.</li><li>Guárdalo como <code>evidencia-storage.txt</code>. No incluyas contraseñas, documentos de identidad ni información personal sensible.</li></ol>
+            </article>
+
+            <article class="phase">
+              <span>FASE B · CREAR EL ALMACENAMIENTO</span><h3>Crea la cuenta con una configuración económica</h3>
+              <ol class="steps"><li>Entra en <a href="https://portal.azure.com/" target="_blank" rel="noopener">portal.azure.com ↗</a>.</li><li>En la búsqueda superior escribe <b>Cuentas de almacenamiento</b> y abre el servicio.</li><li>Selecciona <b>+ Crear</b>.</li><li>Completa la pestaña <b>Aspectos básicos</b> con los valores de la tabla.</li></ol>
+              <table class="field-table"><thead><tr><th>Campo</th><th>Valor recomendado</th></tr></thead><tbody><tr><td>Suscripción</td><td><b>Azure for Students</b>.</td></tr><tr><td>Grupo de recursos</td><td><b>Crear nuevo</b> → <code>rg-lab-storage</code>.</td></tr><tr><td>Nombre de la cuenta</td><td><code>stlabapellido1234</code>. Solo minúsculas y números; debe ser único en Azure.</td></tr><tr><td>Región</td><td>Una región cercana disponible para tu suscripción.</td></tr><tr><td>Rendimiento</td><td><b>Estándar</b>.</td></tr><tr><td>Redundancia</td><td><b>Almacenamiento con redundancia local (LRS)</b>.</td></tr></tbody></table>
+              <ol class="steps"><li>En las demás pestañas conserva los valores predeterminados. Mantén habilitada la transferencia segura por HTTPS.</li><li>Selecciona <b>Revisar y crear</b>. Lee el resumen y confirma que la validación fue correcta.</li><li>Selecciona <b>Crear</b> y espera la notificación <b>La implementación se completó</b>.</li><li>Selecciona <b>Ir al recurso</b>.</li></ol>
+              <div class="callout"><span>ℹ</span><div><h4>¿Por qué usamos LRS?</h4><p>Para una práctica corta, LRS permite aprender redundancia con un costo menor. No significa que sea la elección correcta para todos los sistemas reales.</p></div></div>
+            </article>
+
+            <article class="phase">
+              <span>FASE C · CREAR EL CONTENEDOR PRIVADO</span><h3>Encuentra “Contenedores” aunque cambie el portal</h3>
+              <ol class="steps"><li>Dentro de la cuenta de almacenamiento, abre el menú izquierdo.</li><li>Despliega <b>Almacenamiento de datos</b> y selecciona <b>Contenedores</b>.</li><li>Si no aparece, usa <b>Buscar en el menú</b> y escribe “contenedores”. Otra ruta posible es <b>Información general → Blobs</b>.</li><li>Selecciona <b>+ Contenedor</b>.</li><li>Nombre: <code>materiales</code>. En <b>Nivel de acceso anónimo</b>, conserva <b>Privado (sin acceso anónimo)</b>.</li><li>Selecciona <b>Crear</b> y luego abre el contenedor.</li><li>Selecciona <b>Cargar</b>, elige <code>evidencia-storage.txt</code> y confirma la carga.</li></ol>
+              <div class="callout warning"><span>⚠</span><div><h4>Si solo ves “Recursos compartidos de archivos”</h4><p>Comprueba en <b>Información general</b> que el tipo de cuenta sea <b>StorageV2 (uso general v2)</b>. Una cuenta especializada FileStorage no muestra contenedores de blobs.</p></div></div>
+            </article>
+
+            <article class="phase">
+              <span>FASE D · COMPROBAR PRIVACIDAD Y CREAR LA SAS</span><h3>Prueba primero el bloqueo y después la llave temporal</h3>
+              <ol class="steps"><li>Abre el blob <code>evidencia-storage.txt</code> y copia su <b>URL</b>.</li><li>Pega la URL en una ventana privada del navegador. El archivo <b>no debe abrir</b>; puede aparecer un mensaje XML de autorización o recurso no encontrado.</li><li>Regresa al blob y selecciona <b>Generar SAS</b>. También puede aparecer en el menú de tres puntos.</li><li>En <b>Método de firma</b>, usa <b>Clave de cuenta</b> para esta práctica. En un sistema real se prefiere delegar con Microsoft Entra cuando sea posible.</li><li>Marca únicamente el permiso <b>Leer</b>.</li><li>Establece una expiración de 15 minutos y deja <b>HTTPS solamente</b> como protocolo permitido.</li><li>Selecciona <b>Generar token SAS y dirección URL</b>.</li><li>Copia la <b>URL de SAS de blob</b> completa y ábrela en la ventana privada. Ahora el contenido debe aparecer.</li></ol>
+              <div class="callout danger"><span>🔐</span><div><h4>La URL SAS es una credencial</h4><p>No la publiques en una captura, correo abierto o repositorio. Cualquier persona que tenga el vínculo podrá usar sus permisos hasta que venza o deje de existir el archivo.</p></div></div>
+              <div class="expected"><b>Resultado esperado</b><p>La URL normal falla porque el contenedor es privado. La URL que incluye el token SAS abre el archivo durante el tiempo autorizado.</p></div>
+            </article>
+
+            <article class="phase">
+              <span>FASE E · CONECTARLO CON NGINX</span><h3>Guarda una copia del sitio de Ubuntu</h3>
+              <p>Esta parte es opcional y reutiliza la VM Ubuntu de la práctica anterior.</p>
+              <div class="code-box"><header><span>TERMINAL SSH DE UBUNTU</span><button class="copy-button">Copiar</button></header><pre><code>sudo tar -czf /home/azureuser/respaldo-sitio.tar.gz /var/www/html
+ls -lh /home/azureuser/respaldo-sitio.tar.gz</code></pre></div>
+              <ol class="steps"><li>Con Cyberduck descarga <code>/home/azureuser/respaldo-sitio.tar.gz</code> a Windows.</li><li>Cárgalo al contenedor <code>materiales</code>.</li><li>Comprueba que el tamaño mostrado en Azure es mayor que cero.</li><li>No generes una SAS para el respaldo si no es necesario.</li></ol>
+            </article>
+
+            <details class="trouble"><summary>El portal dice que no tengo permisos para cargar o leer blobs</summary><div><p>Los permisos para administrar la cuenta y los permisos para leer sus datos son diferentes. En <b>Control de acceso (IAM)</b> comprueba que tu usuario tenga un rol de datos como <b>Colaborador de datos de Storage Blob</b>. Las asignaciones pueden tardar algunos minutos en aplicarse.</p></div></details>
+            <details class="trouble"><summary>La SAS no funciona</summary><div><ul><li>Copia la URL completa, incluido todo lo que aparece después del signo <code>?</code>.</li><li>Comprueba que el permiso <b>Leer</b> esté marcado.</li><li>Revisa que la hora de expiración no haya pasado y que tu computador tenga la hora correcta.</li><li>Usa <code>https://</code>, no cambies manualmente la dirección.</li></ul></div></details>
+
+            <div class="evidence"><h3>Evidencias de la práctica</h3><label><input id="s1-account" type="checkbox" data-lab-check> Creé la cuenta estándar con LRS.</label><label><input id="s1-private" type="checkbox" data-lab-check> Comprobé que la URL normal no abre el blob privado.</label><label><input id="s1-sas" type="checkbox" data-lab-check> Abrí el archivo con una SAS de lectura y vencimiento corto.</label><label><input id="s1-backup" type="checkbox" data-lab-check> Guardé el respaldo de NGINX o expliqué cómo hacerlo.</label><label><input id="s1-clean" type="checkbox" data-lab-check> Eliminé el grupo de recursos al finalizar.</label></div>
+            <div class="cleanup"><h3>Limpieza</h3><ol><li>Guarda una captura donde se vea el contenedor y el nombre del archivo, pero no el token SAS.</li><li>Abre <b>Grupos de recursos → rg-lab-storage</b>.</li><li>Selecciona <b>Eliminar grupo de recursos</b>, confirma el nombre y espera a que termine.</li><li>Verifica en <b>Todos los recursos</b> que la cuenta ya no exista.</li></ol></div>
+            <p class="source-line"><span>FUENTES OFICIALES</span><a href="https://learn.microsoft.com/es-es/azure/storage/blobs/blob-containers-portal" target="_blank" rel="noopener">Contenedores y SAS ↗</a><a href="https://learn.microsoft.com/es-es/azure/storage/common/storage-account-overview" target="_blank" rel="noopener">Cuenta de almacenamiento ↗</a></p>
+          </div>
+        </section>
+
+        <section class="lab-section" id="lab-static">
+          <header class="lab-head"><div class="lab-number">02</div><div><h2>Azure Static Web Apps</h2><p>Publica la misma clase de sitio HTML sin administrar una máquina virtual.</p></div></header>
+          <div class="lab-body">
+            <div class="meta-row"><div class="meta"><small>DIFICULTAD</small><b>Básica</b></div><div class="meta"><small>TIEMPO</small><b>60–75 minutos</b></div><div class="meta"><small>COSTO</small><b>Plan Gratis</b></div><div class="meta"><small>GRUPO</small><b>rg-lab-static</b></div></div>
+            <div class="concept-grid"><article class="analogy-card"><h3>Piensa en una imprenta automática</h3><p>Guardas el original en GitHub. Cada vez que actualizas el repositorio, una acción toma los archivos y publica una nueva versión del sitio.</p></article><article class="concept-card"><h3>¿Qué cambia frente a NGINX?</h3><p>Con NGINX administras Ubuntu, puertos, actualizaciones y archivos. Static Web Apps administra la publicación y entrega una dirección HTTPS. Tú te concentras en HTML, CSS y JavaScript.</p></article></div>
+            <div class="flow"><div><b>Archivos HTML</b><small>Contenido del aprendiz</small></div><i>→</i><div><b>Repositorio GitHub</b><small>Guarda los cambios</small></div><i>→</i><div><b>GitHub Actions</b><small>Realiza el despliegue</small></div><i>→</i><div><b>Static Web Apps</b><small>Sitio HTTPS público</small></div></div>
+
+            <article class="phase">
+              <span>FASE A · PREPARAR GITHUB</span><h3>Crea un repositorio con un sitio sencillo</h3>
+              <ol class="steps"><li>Entra en GitHub con tu cuenta y selecciona <b>New repository</b>.</li><li>Nombre: <code>sitio-estatico-azure</code>. Para esta práctica puedes elegir <b>Public</b>.</li><li>Marca <b>Add a README file</b> y selecciona <b>Create repository</b>.</li><li>Selecciona <b>Add file → Upload files</b>.</li><li>Carga el <code>index.html</code>, las hojas CSS, scripts e imágenes de tu sitio. El archivo <code>index.html</code> debe quedar en la raíz del repositorio.</li><li>Escribe un mensaje como “Primera versión del sitio” y selecciona <b>Commit changes</b>.</li></ol>
+              <div class="callout warning"><span>⚠</span><div><h4>Nunca subas secretos a GitHub</h4><p>No cargues claves <code>.pem</code>, contraseñas, tokens SAS, cadenas de conexión ni archivos con datos personales.</p></div></div>
+            </article>
+
+            <article class="phase">
+              <span>FASE B · CREAR STATIC WEB APPS</span><h3>Conecta Azure con el repositorio</h3>
+              <ol class="steps"><li>En Azure busca <b>Static Web Apps</b>.</li><li>Selecciona <b>+ Crear</b>.</li><li>Completa los campos indicados. Cuando selecciones GitHub, Azure te pedirá iniciar sesión y autorizar el acceso al repositorio.</li></ol>
+              <table class="field-table"><thead><tr><th>Campo</th><th>Valor para el laboratorio</th></tr></thead><tbody><tr><td>Suscripción</td><td><b>Azure for Students</b>.</td></tr><tr><td>Grupo de recursos</td><td><b>Crear nuevo</b> → <code>rg-lab-static</code>.</td></tr><tr><td>Nombre</td><td><code>swa-apellido</code> más números si es necesario.</td></tr><tr><td>Tipo de plan</td><td><b>Gratis</b>.</td></tr><tr><td>Origen</td><td><b>GitHub</b>.</td></tr><tr><td>Organización</td><td>Tu usuario u organización de GitHub.</td></tr><tr><td>Repositorio</td><td><code>sitio-estatico-azure</code>.</td></tr><tr><td>Rama</td><td><code>main</code>.</td></tr><tr><td>Valor preestablecido de compilación</td><td><b>Personalizado</b> o <b>Custom</b>.</td></tr><tr><td>Ubicación de la aplicación</td><td><code>/</code>.</td></tr><tr><td>Ubicación de API</td><td>Déjala vacía.</td></tr><tr><td>Ubicación de salida</td><td><code>/</code> para HTML guardado directamente en la raíz.</td></tr></tbody></table>
+              <ol class="steps"><li>Selecciona <b>Revisar y crear</b>. Confirma que el plan sea gratuito.</li><li>Selecciona <b>Crear</b> y luego <b>Ir al recurso</b>.</li><li>La primera publicación puede tardar varios minutos porque GitHub debe ejecutar el flujo de trabajo.</li></ol>
+            </article>
+
+            <article class="phase">
+              <span>FASE C · COMPROBAR EL DESPLIEGUE</span><h3>Observa quién realiza cada parte</h3>
+              <ol class="steps"><li>En GitHub abre el repositorio y selecciona la pestaña <b>Actions</b>.</li><li>Abre el flujo cuyo nombre comienza por <b>Azure Static Web Apps CI/CD</b>.</li><li>Espera una marca verde. Si está amarillo, continúa ejecutándose; si está rojo, abre el trabajo para leer el error.</li><li>Regresa al recurso de Azure y, en <b>Información general</b>, abre la <b>URL</b>.</li><li>Comprueba que el navegador muestre un candado HTTPS y tu contenido.</li></ol>
+              <div class="expected"><b>Resultado esperado</b><p>El sitio abre en una dirección terminada en <code>azurestaticapps.net</code> y utiliza HTTPS sin que el aprendiz instale un certificado.</p></div>
+            </article>
+
+            <article class="phase">
+              <span>FASE D · ACTUALIZACIÓN AUTOMÁTICA</span><h3>Comprueba la integración continua</h3>
+              <ol class="steps"><li>En GitHub abre <code>index.html</code> y selecciona el lápiz <b>Edit this file</b>.</li><li>Cambia un título o agrega un párrafo que diga “Versión 2 publicada automáticamente”.</li><li>Selecciona <b>Commit changes</b> y confirma el cambio en la rama <code>main</code>.</li><li>Abre nuevamente <b>Actions</b> y observa una nueva ejecución.</li><li>Cuando termine, actualiza la dirección de Static Web Apps con <b>Ctrl + F5</b>.</li></ol>
+              <div class="callout success"><span>✓</span><div><h4>Esto es CI/CD</h4><p>El cambio guardado en GitHub activa automáticamente la construcción y publicación del sitio. No tuviste que copiar los archivos manualmente a un servidor.</p></div></div>
+            </article>
+
+            <details class="trouble"><summary>La acción de GitHub falla o muestra que no encuentra index.html</summary><div><ul><li>Confirma que <code>index.html</code> esté en la raíz del repositorio.</li><li>En el archivo de flujo ubicado en <code>.github/workflows</code>, revisa que <code>app_location</code> apunte a <code>/</code>.</li><li>Para HTML sin compilación, la ubicación de salida es <code>/</code>. Si el portal generó otro valor, corrígelo con cuidado y vuelve a ejecutar el flujo.</li><li>No borres el secreto que Azure agregó al repositorio.</li></ul></div></details>
+            <details class="trouble"><summary>El sitio abre, pero faltan estilos o imágenes</summary><div><p>Revisa las mayúsculas y minúsculas. En Internet, <code>Imagenes/logo.png</code> y <code>imagenes/logo.png</code> pueden considerarse rutas diferentes. Usa rutas relativas como <code>css/estilos.css</code>, no rutas de Windows como <code>C:\Mis archivos\...</code>.</p></div></details>
+
+            <div class="evidence"><h3>Evidencias de la práctica</h3><label><input id="s2-repo" type="checkbox" data-lab-check> El repositorio contiene index.html y no contiene secretos.</label><label><input id="s2-deploy" type="checkbox" data-lab-check> La acción de GitHub terminó en verde.</label><label><input id="s2-https" type="checkbox" data-lab-check> Abrí el sitio mediante HTTPS.</label><label><input id="s2-update" type="checkbox" data-lab-check> Un cambio en main se publicó automáticamente.</label><label><input id="s2-clean" type="checkbox" data-lab-check> Eliminé el recurso y retiré el flujo si ya no lo usaré.</label></div>
+            <div class="cleanup"><h3>Limpieza</h3><ol><li>Elimina <code>rg-lab-static</code> desde Azure.</li><li>En GitHub elimina el archivo de flujo <code>azure-static-web-apps-....yml</code> de <code>.github/workflows</code> si conservarás y modificarás el repositorio. Así evitas ejecuciones fallidas después de borrar el recurso.</li><li>Puedes conservar el repositorio como evidencia; no genera costo de Azure.</li></ol></div>
+            <p class="source-line"><span>FUENTES OFICIALES</span><a href="https://learn.microsoft.com/es-es/azure/static-web-apps/get-started-portal" target="_blank" rel="noopener">Creación desde el portal ↗</a><a href="https://learn.microsoft.com/es-es/azure/static-web-apps/plans" target="_blank" rel="noopener">Plan Gratis ↗</a><a href="https://learn.microsoft.com/es-es/azure/static-web-apps/front-end-frameworks" target="_blank" rel="noopener">Ubicaciones para HTML ↗</a></p>
+          </div>
+        </section>
+
+        <section class="lab-section" id="lab-sql">
+          <header class="lab-head"><div class="lab-number">03</div><div><h2>Azure SQL Database</h2><p>Crea una base de datos relacional, guarda aprendices y consulta la información desde el portal.</p></div></header>
+          <div class="lab-body">
+            <div class="meta-row"><div class="meta"><small>DIFICULTAD</small><b>Básica–media</b></div><div class="meta"><small>TIEMPO</small><b>75–90 minutos</b></div><div class="meta"><small>COSTO</small><b>Oferta gratuita*</b></div><div class="meta"><small>GRUPO</small><b>rg-lab-sql</b></div></div>
+            <div class="callout warning"><span>⚠</span><div><h4>Comprueba la oferta antes de crear</h4><p>Debe aparecer el aviso <b>Oferta gratuita aplicada</b> y un costo mensual estimado de cero. Selecciona <b>Pausar automáticamente la base de datos hasta el mes siguiente</b> al alcanzar el límite gratuito. Si el aviso no aparece, no continúes sin revisar el costo con el instructor. Azure for Students Starter no es compatible actualmente con esta oferta.</p></div></div>
+            <div class="concept-grid"><article class="analogy-card"><h3>Piensa en un archivador con reglas</h3><p>Una tabla es como una hoja con columnas definidas. Cada fila representa un elemento y una clave primaria evita confundir dos registros.</p></article><article class="concept-card"><h3>¿Qué administra Azure?</h3><p>Azure se ocupa del motor, actualizaciones, copias internas y disponibilidad de SQL Database. Tú diseñas las tablas, usuarios, datos y reglas de acceso.</p></article></div>
+            <div class="term-list"><div class="term"><b>Tabla</b><span>Datos organizados en filas y columnas.</span></div><div class="term"><b>Consulta</b><span>Instrucción para leer o cambiar datos.</span></div><div class="term"><b>Servidor lógico</b><span>Puerta de entrada que agrupa bases SQL.</span></div><div class="term"><b>Firewall SQL</b><span>Lista de direcciones autorizadas para conectarse.</span></div></div>
+            <div class="flow"><div><b>Editor de consultas</b><small>Envía T-SQL por HTTPS</small></div><i>→</i><div><b>Firewall SQL</b><small>Comprueba tu IP</small></div><i>→</i><div><b>Servidor lógico</b><small>Autentica el usuario</small></div><i>→</i><div><b>bd_formacion</b><small>Guarda las tablas</small></div></div>
+
+            <article class="phase">
+              <span>FASE A · CREAR LA BASE GRATUITA</span><h3>Inicia desde el centro de Azure SQL</h3>
+              <ol class="steps"><li>En el buscador del portal escribe <b>Azure SQL</b> y abre el centro de Azure SQL.</li><li>En <b>Crear una base de datos SQL</b>, selecciona <b>Iniciar gratis</b>. Si no aparece, abre <b>Bases de datos SQL → + Crear</b> y comprueba el resumen de costos.</li><li>En <b>Detalles del proyecto</b>, selecciona <b>Azure for Students</b> y crea <code>rg-lab-sql</code>.</li><li>Nombre de la base de datos: <code>bd_formacion</code>.</li><li>En <b>Servidor</b>, selecciona <b>Crear nuevo</b>.</li></ol>
+              <table class="field-table"><thead><tr><th>Campo del servidor</th><th>Valor recomendado</th></tr></thead><tbody><tr><td>Nombre del servidor</td><td><code>sql-lab-apellido-1234</code>. Debe ser único.</td></tr><tr><td>Ubicación</td><td>La misma región elegida para la base de datos.</td></tr><tr><td>Método de autenticación</td><td><b>Usar autenticación SQL</b> para este primer laboratorio.</td></tr><tr><td>Inicio de sesión del administrador</td><td><code>sqladminlab</code>. No uses “admin” ni tu correo.</td></tr><tr><td>Contraseña</td><td>Una contraseña nueva y segura. No la escribas en la evidencia.</td></tr></tbody></table>
+              <ol class="steps"><li>Confirma la creación del servidor.</li><li>En <b>Entorno de carga de trabajo</b>, elige <b>Desarrollo</b> si aparece.</li><li>Comprueba que la tarjeta de costo muestre la oferta gratuita. En el comportamiento al alcanzar el límite, elige <b>Pausar automáticamente la base de datos hasta el mes siguiente</b>.</li><li>No habilites un <b>grupo elástico</b>.</li><li>En <b>Almacenamiento de copia de seguridad</b>, selecciona redundancia local para el laboratorio.</li></ol>
+            </article>
+
+            <article class="phase">
+              <span>FASE B · CONFIGURAR LA CONEXIÓN</span><h3>Autoriza solamente la IP del aprendiz</h3>
+              <ol class="steps"><li>Abre la pestaña <b>Redes</b>.</li><li>En <b>Método de conectividad</b>, selecciona <b>Punto de conexión público</b>.</li><li>En reglas de firewall, selecciona <b>Agregar dirección IP del cliente actual</b> o establece esa opción en <b>Sí</b>.</li><li>En <b>Permitir que los servicios y recursos de Azure accedan a este servidor</b>, selecciona <b>No</b> por ahora. Abrirlo para todo Azure no es necesario para consultar desde tu navegador.</li><li>Selecciona <b>Revisar y crear</b>. Confirma otra vez el costo y luego selecciona <b>Crear</b>.</li></ol>
+              <div class="callout"><span>ℹ</span><div><h4>¿Qué IP se autoriza?</h4><p>Es la dirección pública con la que tu computador sale a Internet. Si cambias de red, quizá debas agregar la nueva IP y retirar la anterior.</p></div></div>
+            </article>
+
+            <article class="phase">
+              <span>FASE C · CREAR TABLAS Y DATOS</span><h3>Usa el Editor de consultas del portal</h3>
+              <ol class="steps"><li>Cuando finalice la implementación, selecciona <b>Ir al recurso</b>.</li><li>En el menú de la base de datos, selecciona <b>Editor de consultas (versión preliminar)</b>.</li><li>Elige <b>Autenticación SQL</b> e inicia sesión con <code>sqladminlab</code> y la contraseña creada.</li><li>Si aparece “La dirección IP no está permitida”, selecciona el vínculo <b>Agregar IP a la lista de permitidas</b>, espera hasta cinco minutos y vuelve a conectar.</li><li>Copia y ejecuta el primer bloque. La palabra <code>GO</code> separa grupos de instrucciones.</li></ol>
+              <div class="code-box"><header><span>CREAR LA TABLA</span><button class="copy-button">Copiar</button></header><pre><code>CREATE TABLE Aprendices (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Nombre NVARCHAR(100) NOT NULL,
+    Programa NVARCHAR(120) NOT NULL,
+    Correo NVARCHAR(150) NULL,
+    FechaRegistro DATETIME2 NOT NULL DEFAULT SYSDATETIME()
+);
+GO</code></pre></div>
+              <div class="code-box"><header><span>INSERTAR Y CONSULTAR</span><button class="copy-button">Copiar</button></header><pre><code>INSERT INTO Aprendices (Nombre, Programa, Correo)
+VALUES
+('Laura Gomez', 'Redes de datos', 'laura@ejemplo.com'),
+('Carlos Perez', 'Desarrollo de software', 'carlos@ejemplo.com'),
+('Ana Ruiz', 'Redes de datos', NULL);
+GO
+
+SELECT Id, Nombre, Programa, Correo, FechaRegistro
+FROM Aprendices
+ORDER BY Id;
+GO</code></pre></div>
+              <div class="expected"><b>Resultado esperado</b><p>La cuadrícula debe mostrar tres filas. Los valores de <b>Id</b> aparecen automáticamente y <b>FechaRegistro</b> contiene la fecha del servidor.</p></div>
+            </article>
+
+            <article class="phase">
+              <span>FASE D · PRACTICAR CRUD</span><h3>Crea, lee, actualiza y elimina</h3>
+              <p>CRUD resume las cuatro operaciones más comunes: crear, leer, actualizar y eliminar datos.</p>
+              <div class="code-box"><header><span>ACTUALIZAR Y VERIFICAR</span><button class="copy-button">Copiar</button></header><pre><code>UPDATE Aprendices
+SET Programa = 'Administracion de redes'
+WHERE Nombre = 'Laura Gomez';
+
+SELECT * FROM Aprendices
+WHERE Nombre = 'Laura Gomez';
+GO</code></pre></div>
+              <div class="code-box"><header><span>ELIMINAR Y CONTAR</span><button class="copy-button">Copiar</button></header><pre><code>DELETE FROM Aprendices
+WHERE Nombre = 'Carlos Perez';
+
+SELECT COUNT(*) AS TotalAprendices
+FROM Aprendices;
+GO</code></pre></div>
+              <div class="expected"><b>Resultado esperado</b><p>Laura aparece con el nuevo programa y el conteo final devuelve 2. La eliminación usa una condición <code>WHERE</code>; sin ella se borrarían todas las filas.</p></div>
+              <div class="callout danger"><span>!</span><div><h4>Lee antes de ejecutar DELETE</h4><p>Primero ejecuta un <code>SELECT</code> con la misma condición para confirmar qué filas serán afectadas. En esta práctica los nombres son ficticios.</p></div></div>
+            </article>
+
+            <details class="trouble"><summary>No puedo iniciar sesión en el Editor de consultas</summary><div><ul><li>Comprueba que seleccionaste <b>Autenticación SQL</b> y no Microsoft Entra.</li><li>Usa el administrador del servidor lógico, no el correo de Azure.</li><li>Agrega la IP actual desde el mensaje del editor o desde <b>Servidor SQL → Redes → Reglas de firewall</b>.</li><li>El editor utiliza HTTPS por el puerto 443; algunas redes institucionales con proxy pueden bloquearlo.</li><li>Si la base estaba pausada, espera unos minutos mientras se reactiva.</li></ul></div></details>
+            <details class="trouble"><summary>La tabla ya existe al repetir el ejercicio</summary><div><p>No ejecutes nuevamente <code>CREATE TABLE</code>. Puedes continuar con las consultas o eliminar solamente la tabla de práctica con <code>DROP TABLE Aprendices;</code> y comenzar de nuevo. Esta instrucción elimina la tabla y sus datos.</p></div></details>
+
+            <div class="evidence"><h3>Evidencias de la práctica</h3><label><input id="s3-free" type="checkbox" data-lab-check> Confirmé “Oferta gratuita aplicada” y pausa al alcanzar el límite.</label><label><input id="s3-firewall" type="checkbox" data-lab-check> Autoricé únicamente mi IP actual.</label><label><input id="s3-table" type="checkbox" data-lab-check> Creé la tabla y consulté tres filas.</label><label><input id="s3-crud" type="checkbox" data-lab-check> Realicé UPDATE y DELETE con una condición WHERE.</label><label><input id="s3-clean" type="checkbox" data-lab-check> Eliminé rg-lab-sql al terminar.</label></div>
+            <div class="cleanup"><h3>Limpieza</h3><ol><li>Guarda una captura de la cuadrícula ocultando el servidor y las credenciales.</li><li>Cierra el Editor de consultas para no mantener conexiones que impidan la pausa automática.</li><li>Elimina <code>rg-lab-sql</code> y confirma que desaparezcan la base y el servidor lógico.</li></ol></div>
+            <p class="source-line"><span>FUENTES OFICIALES</span><a href="https://learn.microsoft.com/es-es/azure/azure-sql/database/free-offer?view=azuresql" target="_blank" rel="noopener">Oferta gratuita ↗</a><a href="https://learn.microsoft.com/en-us/azure/azure-sql/database/connect-query-portal?view=azuresql-db" target="_blank" rel="noopener">Editor de consultas ↗</a></p>
+          </div>
+        </section>
+
+        <section class="lab-section" id="lab-functions">
+          <header class="lab-head"><div class="lab-number">04</div><div><h2>Azure Functions y una API HTTP</h2><p>Crea un pequeño programa que responde por Internet sin administrar una máquina virtual.</p></div></header>
+          <div class="lab-body">
+            <div class="meta-row"><div class="meta"><small>DIFICULTAD</small><b>Media</b></div><div class="meta"><small>TIEMPO</small><b>75–90 minutos</b></div><div class="meta"><small>COSTO</small><b>Bajo; revisar plan</b></div><div class="meta"><small>GRUPO</small><b>rg-lab-functions</b></div></div>
+            <div class="concept-grid"><article class="analogy-card"><h3>Piensa en un timbre</h3><p>La función no necesita estar trabajando todo el tiempo. Cuando llega una solicitud HTTP, Azure la despierta, ejecuta el código y entrega una respuesta.</p></article><article class="concept-card"><h3>¿Qué es una API?</h3><p>Es una puerta para que dos programas intercambien información con reglas conocidas. En este laboratorio la página envía un nombre y la función devuelve un objeto JSON.</p></article></div>
+            <div class="term-list"><div class="term"><b>Desencadenador</b><span>Evento que inicia una función.</span></div><div class="term"><b>HTTP</b><span>Protocolo usado por navegador y API.</span></div><div class="term"><b>JSON</b><span>Formato de texto para intercambiar datos.</span></div><div class="term"><b>CORS</b><span>Lista de sitios autorizados para llamar a la API desde un navegador.</span></div></div>
+            <div class="flow"><div><b>Página web</b><small>Envía ?nombre=Ana</small></div><i>→</i><div><b>Función HTTP</b><small>Ejecuta JavaScript</small></div><i>→</i><div><b>Respuesta JSON</b><small>Devuelve el saludo</small></div></div>
+
+            <article class="phase">
+              <span>FASE A · CREAR LA APLICACIÓN DE FUNCIONES</span><h3>Elige un plan que permita editar desde el portal</h3>
+              <ol class="steps"><li>Busca <b>Aplicación de funciones</b> o <b>Function App</b> en el portal.</li><li>Selecciona <b>+ Crear</b>.</li><li>En la selección de hospedaje, elige el plan <b>Consumo</b> tradicional. No elijas <b>Consumo flexible</b> para este ejercicio, porque la edición en el portal no está disponible allí.</li><li>Crea un grupo nuevo llamado <code>rg-lab-functions</code>.</li></ol>
+              <table class="field-table"><thead><tr><th>Campo</th><th>Valor recomendado</th></tr></thead><tbody><tr><td>Nombre de la aplicación</td><td><code>func-saludo-apellido-1234</code>. Debe ser único.</td></tr><tr><td>Pila en tiempo de ejecución</td><td><b>JavaScript</b>.</td></tr><tr><td>Versión</td><td>La versión LTS disponible.</td></tr><tr><td>Sistema operativo</td><td><b>Windows</b>, necesario para editar JavaScript en el portal con el plan Consumo.</td></tr><tr><td>Región</td><td>Una región cercana que ofrezca esta combinación.</td></tr><tr><td>Cuenta de almacenamiento</td><td>Permite que Azure cree una nueva dentro del mismo grupo.</td></tr><tr><td>Application Insights</td><td>Puedes desactivarlo en este primer ejercicio para simplificar y reducir datos almacenados.</td></tr></tbody></table>
+              <ol class="steps"><li>Selecciona <b>Revisar y crear</b>. Observa qué recursos adicionales se crearán.</li><li>Revisa el costo del plan seleccionado y selecciona <b>Crear</b>.</li><li>Al finalizar, selecciona <b>Ir al recurso</b>.</li></ol>
+              <div class="callout warning"><span>⚠</span><div><h4>Si no aparece Windows + Consumo</h4><p>Prueba otra región. No crees un plan Premium para resolverlo porque puede consumir rápidamente el crédito. Si la institución solo permite Consumo flexible, realiza esta práctica desde Visual Studio Code con el instructor.</p></div></div>
+            </article>
+
+            <article class="phase">
+              <span>FASE B · CREAR EL DESENCADENADOR HTTP</span><h3>Construye la función “saludo”</h3>
+              <ol class="steps"><li>Dentro de la aplicación, abre <b>Funciones</b>.</li><li>Selecciona <b>+ Crear</b> y elige la plantilla <b>Desencadenador HTTP</b>.</li><li>Nombre: <code>saludo</code>.</li><li>Nivel de autorización: <b>Anónimo</b>. Solo lo usaremos para devolver un saludo sin datos sensibles.</li><li>Selecciona <b>Crear</b> y abre <b>Código y prueba</b>.</li><li>Si el editor permite modificar <code>index.js</code>, reemplaza su contenido por el siguiente código. Si la plantilla usa otro estilo y ya responde “Hello”, puedes conservarla y probarla con su parámetro <code>name</code>.</li></ol>
+              <div class="code-box"><header><span>JAVASCRIPT · MODELO ACTUAL</span><button class="copy-button">Copiar</button></header><pre><code>const { app } = require('@azure/functions');
+
+app.http('saludo', {
+    methods: ['GET'],
+    authLevel: 'anonymous',
+    handler: async (request, context) => {
+        const nombre = request.query.get('nombre') || 'aprendiz';
+        return {
+            jsonBody: {
+                mensaje: 'Hola ' + nombre + ', Azure Functions esta respondiendo.',
+                servicio: 'Azure Functions'
+            }
+        };
+    }
+});</code></pre></div>
+              <ol class="steps"><li>Selecciona <b>Guardar</b>.</li><li>Selecciona <b>Probar/ejecutar</b>. Método HTTP: <b>GET</b>.</li><li>En los parámetros de consulta agrega clave <code>nombre</code> y valor <code>Ana</code>.</li><li>Selecciona <b>Ejecutar</b>.</li></ol>
+              <div class="expected"><b>Resultado esperado</b><p>Estado HTTP <code>200 OK</code> y una respuesta JSON que contiene “Hola Ana”. El registro de ejecución debe indicar que la función terminó correctamente.</p></div>
+            </article>
+
+            <article class="phase">
+              <span>FASE C · ABRIR LA API DESDE EL NAVEGADOR</span><h3>Usa la dirección pública de la función</h3>
+              <ol class="steps"><li>Selecciona <b>Obtener la dirección URL de la función</b>.</li><li>Copia la dirección y agrega al final <code>?nombre=TuNombre</code>. Si ya contiene un signo <code>?</code>, agrega el parámetro con <code>&amp;nombre=TuNombre</code>.</li><li>Abre la dirección en una pestaña privada.</li><li>Prueba también sin el parámetro. Debe responder usando la palabra “aprendiz”.</li></ol>
+              <div class="callout danger"><span>!</span><div><h4>Una función anónima es pública</h4><p>No debe borrar información, revelar secretos ni aceptar datos sensibles. Al terminar, elimina el grupo de recursos. En aplicaciones reales se configura autenticación y autorización.</p></div></div>
+            </article>
+
+            <article class="phase">
+              <span>FASE D · LLAMARLA DESDE STATIC WEB APPS</span><h3>Conecta la página de la práctica 2</h3>
+              <ol class="steps"><li>En la aplicación de funciones abre <b>API → CORS</b>. En algunas versiones aparece en <b>Configuración</b>.</li><li>Agrega el origen exacto de tu sitio, por ejemplo <code>https://nombre.azurestaticapps.net</code>, sin barra final. No uses <code>*</code>.</li><li>Guarda los cambios.</li><li>En el repositorio del sitio agrega este bloque dentro del cuerpo de <code>index.html</code>. Reemplaza <code>URL_DE_LA_FUNCION</code> por la URL sin parámetros.</li></ol>
+              <div class="code-box"><header><span>HTML + JAVASCRIPT</span><button class="copy-button">Copiar</button></header><pre><code>&lt;button id="probarApi"&gt;Probar la API&lt;/button&gt;
+&lt;p id="respuesta"&gt;Aun no se ha consultado la funcion.&lt;/p&gt;
+
+&lt;script&gt;
+document.querySelector('#probarApi').addEventListener('click', async () =&gt; {
+  const salida = document.querySelector('#respuesta');
+  salida.textContent = 'Consultando...';
+  try {
+    const respuesta = await fetch('URL_DE_LA_FUNCION?nombre=Aprendiz');
+    if (!respuesta.ok) throw new Error('HTTP ' + respuesta.status);
+    const datos = await respuesta.json();
+    salida.textContent = datos.mensaje;
+  } catch (error) {
+    salida.textContent = 'No fue posible consultar la API: ' + error.message;
+  }
+});
+&lt;/script&gt;</code></pre></div>
+              <ol class="steps"><li>Guarda el cambio en GitHub y espera la acción de publicación.</li><li>Abre Static Web Apps y selecciona <b>Probar la API</b>.</li><li>Comprueba que el mensaje de Azure Functions aparece dentro de la página.</li></ol>
+            </article>
+
+            <details class="trouble"><summary>El código aparece como “solo lectura”</summary><div><p>La edición en el portal tiene limitaciones. Debe ser una función creada en el portal, JavaScript sobre Windows y plan Consumo compatible. Una implementación realizada desde GitHub o Visual Studio Code puede convertir el contenido en solo lectura. Si no puedes cumplir esas condiciones, conserva la plantilla existente o desarrolla con Visual Studio Code.</p></div></details>
+            <details class="trouble"><summary>La función abre directamente, pero falla desde la página</summary><div><p>Normalmente es CORS. Copia únicamente el origen de Static Web Apps —protocolo y dominio, sin ruta ni barra final— en la lista CORS. Abre las herramientas del navegador con F12 y revisa si la consola menciona “blocked by CORS policy”.</p></div></details>
+            <details class="trouble"><summary>Recibo 404 o el nombre no cambia</summary><div><ul><li>Comprueba que copiaste la URL de la función, no solo la URL de la aplicación.</li><li>Revisa el nombre del parámetro: el código usa <code>nombre</code>.</li><li>Guarda el archivo y espera unos segundos antes de probar.</li><li>Si conservaste la plantilla predeterminada, puede usar el parámetro <code>name</code> en inglés.</li></ul></div></details>
+
+            <div class="evidence"><h3>Evidencias de la práctica</h3><label><input id="s4-plan" type="checkbox" data-lab-check> Usé un plan de consumo compatible y revisé el costo.</label><label><input id="s4-test" type="checkbox" data-lab-check> Obtuve HTTP 200 y una respuesta JSON.</label><label><input id="s4-url" type="checkbox" data-lab-check> Abrí la función con un parámetro desde el navegador.</label><label><input id="s4-cors" type="checkbox" data-lab-check> Autoricé solamente el origen de mi Static Web App.</label><label><input id="s4-integration" type="checkbox" data-lab-check> Mostré la respuesta dentro de mi página.</label><label><input id="s4-clean" type="checkbox" data-lab-check> Eliminé rg-lab-functions.</label></div>
+            <div class="cleanup"><h3>Limpieza</h3><ol><li>Guarda una captura del resultado, pero no publiques claves de función si aparecen.</li><li>Elimina <code>rg-lab-functions</code>. Recuerda que contiene la función, el plan y la cuenta de almacenamiento asociada.</li><li>Retira de la página la URL eliminada o muestra un mensaje indicando que el laboratorio terminó.</li></ol></div>
+            <p class="source-line"><span>FUENTES OFICIALES</span><a href="https://learn.microsoft.com/es-es/azure/azure-functions/functions-create-function-app-portal" target="_blank" rel="noopener">Crear Function App ↗</a><a href="https://learn.microsoft.com/en-us/azure/azure-functions/functions-how-to-use-azure-function-app-settings" target="_blank" rel="noopener">Límites de edición y CORS ↗</a></p>
+          </div>
+        </section>
+
+        <section class="lab-section" id="lab-monitor">
+          <header class="lab-head"><div class="lab-number">05</div><div><h2>Azure Monitor y alertas</h2><p>Observa la VM, crea una condición y recibe un correo cuando el procesador trabaje demasiado.</p></div></header>
+          <div class="lab-body">
+            <div class="meta-row"><div class="meta"><small>DIFICULTAD</small><b>Básica–media</b></div><div class="meta"><small>TIEMPO</small><b>60–90 minutos</b></div><div class="meta"><small>COSTO</small><b>Revisar alerta + VM</b></div><div class="meta"><small>REUTILIZA</small><b>VM Ubuntu o Windows</b></div></div>
+            <div class="concept-grid"><article class="analogy-card"><h3>Piensa en el tablero de un vehículo</h3><p>El tablero no conduce el automóvil: muestra información para que una persona actúe. Azure Monitor hace lo mismo con métricas, registros y alertas.</p></article><article class="concept-card"><h3>¿Qué vas a comprobar?</h3><p>La VM envía una medición de CPU. Una regla compara el dato con un límite. Si se cumple la condición, un grupo de acciones envía la notificación.</p></article></div>
+            <div class="term-list"><div class="term"><b>Métrica</b><span>Número medido a lo largo del tiempo.</span></div><div class="term"><b>Umbral</b><span>Valor que activa la regla.</span></div><div class="term"><b>Alerta</b><span>Registro de que ocurrió la condición.</span></div><div class="term"><b>Grupo de acciones</b><span>Destinos que reciben la notificación.</span></div></div>
+            <div class="flow"><div><b>VM</b><small>Produce % de CPU</small></div><i>→</i><div><b>Azure Monitor</b><small>Guarda la métrica</small></div><i>→</i><div><b>Regla &gt; 40 %</b><small>Evalúa 5 minutos</small></div><i>→</i><div><b>Grupo de acciones</b><small>Envía un correo</small></div></div>
+            <article class="phase"><span>FASE A · VER UNA MÉTRICA REAL</span><h3>Enciende la VM y abre el Explorador de métricas</h3><ol class="steps"><li>Abre la VM Ubuntu o Windows utilizada anteriormente.</li><li>Si está desasignada, selecciona <b>Iniciar</b> y espera el estado <b>En ejecución</b>. Desde este momento vuelve a consumir procesamiento.</li><li>En el menú de la VM, busca la sección <b>Supervisión</b> y selecciona <b>Métricas</b>.</li><li>En <b>Ámbito</b> debe aparecer la VM actual.</li><li>En <b>Espacio de nombres de métricas</b>, conserva <b>Host de máquina virtual</b> o el valor equivalente.</li><li>En <b>Métrica</b>, selecciona <b>Porcentaje de CPU</b>.</li><li>En <b>Agregación</b>, selecciona <b>Promedio</b> y establece un intervalo de los últimos 30 minutos.</li></ol><div class="callout"><span>ℹ</span><div><h4>¿Qué significa “promedio”?</h4><p>Azure combina varias mediciones del intervalo y muestra un valor representativo. Un pico de pocos segundos puede verse más pequeño cuando se promedia durante cinco minutos.</p></div></div></article>
+            <article class="phase"><span>FASE B · CREAR EL DESTINO DEL AVISO</span><h3>Configura un grupo de acciones con tu correo</h3><ol class="steps"><li>Desde el gráfico selecciona <b>Nueva regla de alertas</b> o <b>Crear → Regla de alertas</b>.</li><li>Comprueba que el <b>Ámbito</b> sea la VM.</li><li>En <b>Acciones</b>, selecciona <b>Usar grupo de acciones → Crear grupo de acciones</b>.</li><li>Si el portal solicita un grupo de recursos, crea <code>rg-lab-monitor</code>.</li><li>Nombre del grupo de acciones: <code>ag-correo-apellido</code>. Nombre para mostrar: <code>correo-lab</code>.</li><li>Abre <b>Notificaciones</b>, elige <b>Correo electrónico/SMS/Mensaje push/Voz</b>, marca <b>Correo electrónico</b> y escribe tu dirección.</li><li>Nombre de la notificación: <code>correo-aprendiz</code>.</li><li>Selecciona <b>Aceptar → Revisar y crear → Crear</b>.</li><li>Revisa la bandeja de entrada. Azure suele enviar un aviso informando que fuiste agregado al grupo de acciones.</li></ol><div class="callout warning"><span>⚠</span><div><h4>El correo del grupo no significa que la alerta se activó</h4><p>El primer mensaje solo confirma la suscripción al grupo de acciones. Más adelante debes recibir otro mensaje que identifique la regla y su estado.</p></div></div></article>
+            <article class="phase"><span>FASE C · DEFINIR LA CONDICIÓN</span><h3>Crea una regla fácil de activar</h3><ol class="steps"><li>En <b>Condición</b>, selecciona la señal <b>Porcentaje de CPU</b>.</li><li>Tipo de umbral: <b>Estático</b>.</li><li>Operador: <b>Mayor que</b>.</li><li>Agregación: <b>Promedio</b>.</li><li>Valor de umbral: <code>40</code>.</li><li>Período de búsqueda retrospectiva: <b>5 minutos</b>. Frecuencia de evaluación: <b>1 minuto</b>, si está disponible.</li><li>En <b>Detalles</b>, usa el grupo <code>rg-lab-monitor</code>, nombre <code>alerta-cpu-vm</code> y gravedad <b>3 - Informativo</b> o <b>Advertencia</b>.</li><li>Mantén habilitada la regla y revisa el costo indicado por el portal antes de seleccionar <b>Crear regla de alertas</b>.</li></ol></article>
+            <article class="phase"><span>FASE D · GENERAR CARGA CONTROLADA</span><h3>Haz que la CPU supere el umbral durante tres minutos</h3><p>En Ubuntu conéctate por SSH. El siguiente bloque inicia cuatro procesos sencillos y los detiene automáticamente después de 180 segundos.</p><div class="code-box"><header><span>UBUNTU · CARGA TEMPORAL</span><button class="copy-button">Copiar</button></header><pre><code>for i in 1 2 3 4; do
+  timeout 180s yes &gt; /dev/null &amp;
+done
+wait
+echo "La prueba de carga termino"</code></pre></div><ol class="steps"><li>Deja ejecutar el comando hasta ver “La prueba de carga terminó”. Si necesitas detenerlo antes, presiona <b>Ctrl + C</b>.</li><li>Regresa a <b>Métricas</b> y actualiza el gráfico. Los datos pueden tardar varios minutos en aparecer.</li><li>Abre <b>Supervisión → Alertas</b> y busca <code>alerta-cpu-vm</code>.</li><li>Espera entre 5 y 15 minutos. Revisa también el correo no deseado.</li><li>Cuando la CPU regrese por debajo del límite, una alerta con estado puede mostrarse como resuelta.</li></ol><div class="expected"><b>Resultado esperado</b><p>El gráfico muestra un aumento claro de CPU, Azure registra una alerta activada y el correo contiene el nombre de la regla y de la VM.</p></div></article>
+            <details class="trouble"><summary>La CPU subió, pero no llegó la alerta</summary><div><ul><li>Confirma que la regla esté habilitada y que el ámbito sea la VM correcta.</li><li>Revisa que la condición use <b>Mayor que 40</b>, no “Menor que”.</li><li>Espera al menos dos ciclos de evaluación; las métricas y notificaciones no son instantáneas.</li><li>Abre el grupo de acciones y verifica el correo.</li><li>Busca el mensaje en correo no deseado. La evidencia principal puede ser la alerta visible en el portal aunque el proveedor de correo demore la entrega.</li></ul></div></details>
+            <details class="trouble"><summary>Estoy usando Windows Server</summary><div><p>Puedes bajar temporalmente el umbral para observar una alerta con la actividad normal de la VM. Para una clase inicial es más seguro realizar la carga controlada en Ubuntu.</p></div></details>
+            <div class="evidence"><h3>Evidencias de la práctica</h3><label><input id="s5-metric" type="checkbox" data-lab-check> Mostré el gráfico de Porcentaje de CPU.</label><label><input id="s5-action" type="checkbox" data-lab-check> Creé y comprobé el grupo de acciones.</label><label><input id="s5-rule" type="checkbox" data-lab-check> La regla usa ámbito, señal, condición y acción correctos.</label><label><input id="s5-fired" type="checkbox" data-lab-check> Vi la alerta activada o recibí el correo.</label><label><input id="s5-clean" type="checkbox" data-lab-check> Eliminé la regla, el grupo de acciones y desasigné la VM.</label></div>
+            <div class="cleanup"><h3>Limpieza</h3><ol><li>En Azure Monitor elimina <code>alerta-cpu-vm</code>.</li><li>Elimina el grupo de acciones <code>ag-correo-apellido</code> y después <code>rg-lab-monitor</code>.</li><li>Detén la VM desde Azure y confirma <b>Detenido (desasignado)</b>. Apagar dentro de Ubuntu no garantiza la desasignación.</li></ol></div>
+            <p class="source-line"><span>FUENTE OFICIAL</span><a href="https://learn.microsoft.com/es-es/azure/azure-monitor/alerts/tutorial-metric-alert" target="_blank" rel="noopener">Crear una alerta de métrica ↗</a></p>
+          </div>
+        </section>
+
+        <section class="lab-section" id="lab-keyvault">
+          <header class="lab-head"><div class="lab-number">06</div><div><h2>Azure Key Vault e identidad administrada</h2><p>Guarda un secreto de práctica y permite que la VM lo lea sin almacenar una contraseña en el código.</p></div></header>
+          <div class="lab-body">
+            <div class="meta-row"><div class="meta"><small>DIFICULTAD</small><b>Media</b></div><div class="meta"><small>TIEMPO</small><b>75–100 minutos</b></div><div class="meta"><small>COSTO</small><b>Muy bajo</b></div><div class="meta"><small>REUTILIZA</small><b>VM Ubuntu</b></div></div>
+            <div class="concept-grid"><article class="analogy-card"><h3>Piensa en una caja fuerte con portero</h3><p>Key Vault guarda el valor. Microsoft Entra comprueba quién solicita entrar y RBAC determina si esa identidad puede leer, crear o administrar secretos.</p></article><article class="concept-card"><h3>¿Qué es una identidad administrada?</h3><p>Es una identidad que Azure crea para un recurso, como la VM. Azure administra sus credenciales; por eso el programa puede autenticarse sin guardar un usuario y contraseña.</p></article></div>
+            <div class="term-list"><div class="term"><b>Secreto</b><span>Valor sensible como contraseña o cadena de conexión.</span></div><div class="term"><b>Identidad administrada</b><span>Identidad propia de un recurso de Azure.</span></div><div class="term"><b>RBAC</b><span>Roles que autorizan acciones concretas.</span></div><div class="term"><b>Token</b><span>Comprobante temporal de identidad y acceso.</span></div></div>
+            <div class="flow"><div><b>Programa en la VM</b><small>No guarda contraseña</small></div><i>→</i><div><b>Identidad de la VM</b><small>Solicita un token</small></div><i>→</i><div><b>RBAC</b><small>Revisa el rol</small></div><i>→</i><div><b>Key Vault</b><small>Entrega el secreto</small></div></div>
+            <article class="phase"><span>FASE A · CREAR EL ALMACÉN</span><h3>Configura una caja fuerte de laboratorio</h3><ol class="steps"><li>En el portal busca <b>Almacenes de claves</b> o <b>Key Vaults</b>.</li><li>Selecciona <b>+ Crear</b>.</li><li>Suscripción: <b>Azure for Students</b>. Crea <code>rg-lab-keyvault</code>.</li><li>Nombre: <code>kv-lab-apellido-1234</code>. Debe ser único globalmente.</li><li>Región: preferiblemente la misma de la VM.</li><li>Nivel de precios: <b>Estándar</b>.</li><li>En <b>Configuración de acceso</b>, selecciona <b>Control de acceso basado en rol de Azure</b>.</li><li>En <b>Redes</b>, para este laboratorio conserva acceso público. RBAC seguirá exigiendo autorización. En producción se restringe la red.</li><li>En recuperación, conserva la eliminación temporal predeterminada. No habilites protección de purga para una práctica desechable sin consultar al instructor, porque después no puede deshabilitarse.</li><li>Selecciona <b>Revisar y crear → Crear → Ir al recurso</b>.</li></ol></article>
+            <article class="phase"><span>FASE B · DARTE PERMISO Y CREAR UN SECRETO</span><h3>Diferencia administrar el recurso de administrar su contenido</h3><ol class="steps"><li>En Key Vault abre <b>Control de acceso (IAM) → Agregar → Agregar asignación de roles</b>.</li><li>Busca el rol <b>Responsable de secretos de Key Vault</b> y selecciónalo.</li><li>En <b>Miembros</b>, elige <b>Usuario, grupo o entidad de servicio</b>, selecciona tu propia cuenta y completa <b>Revisar y asignar</b>.</li><li>Espera algunos minutos para que el permiso se aplique.</li><li>Abre <b>Objetos → Secretos</b> y selecciona <b>+ Generar o importar</b>.</li><li>Opciones de carga: <b>Manual</b>. Nombre: <code>mensaje-lab</code>.</li><li>Valor: <code>ValorTemporalSoloParaAprender2026</code>. No uses una contraseña real.</li><li>Mantén <b>Habilitado: Sí</b> y selecciona <b>Crear</b>.</li><li>Abre el secreto y su versión actual. Usa <b>Mostrar valor del secreto</b> para comprobarlo.</li></ol><div class="callout danger"><span>🔐</span><div><h4>No captures el valor</h4><p>La evidencia debe mostrar el nombre del secreto y que está habilitado, pero no su contenido. Un secreto deja de ser secreto cuando aparece en una captura o repositorio.</p></div></div></article>
+            <article class="phase"><span>FASE C · ACTIVAR LA IDENTIDAD DE LA VM</span><h3>Haz que Ubuntu tenga una identidad reconocida por Azure</h3><ol class="steps"><li>Abre la VM Ubuntu.</li><li>En el menú izquierdo selecciona <b>Configuración → Identidad</b>.</li><li>En <b>Asignada por el sistema</b>, cambia <b>Estado</b> a <b>Activado</b>.</li><li>Selecciona <b>Guardar</b> y confirma la creación.</li><li>Regresa a Key Vault y abre <b>Control de acceso (IAM)</b>.</li><li>Agrega el rol <b>Usuario de secretos de Key Vault</b>.</li><li>En <b>Asignar acceso a</b>, selecciona <b>Identidad administrada</b>.</li><li>Selecciona miembros, tipo <b>Máquina virtual</b>, elige tu VM Ubuntu y completa <b>Revisar y asignar</b>.</li><li>Espera entre 5 y 10 minutos para la propagación del rol.</li></ol><div class="callout"><span>ℹ</span><div><h4>Dos roles diferentes</h4><p>Tu usuario recibe <b>Responsable de secretos</b> porque crea y administra valores. La VM recibe <b>Usuario de secretos</b> porque solo necesita leerlos. Esto aplica el principio de privilegio mínimo.</p></div></div></article>
+            <article class="phase"><span>FASE D · LEER EL SECRETO DESDE UBUNTU</span><h3>Solicita un token sin escribir credenciales</h3><p>Conéctate por SSH. Reemplaza <code>NOMBRE_VAULT</code> por el nombre exacto del almacén, sin <code>https://</code>. El primer comando solicita un token al servicio de metadatos que solo existe dentro de la VM.</p><div class="code-box"><header><span>UBUNTU · IDENTIDAD ADMINISTRADA</span><button class="copy-button">Copiar</button></header><pre><code>TOKEN=$(curl -s --noproxy "*" -H Metadata:true \
+"http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&amp;resource=https%3A%2F%2Fvault.azure.net" \
+| python3 -c "import sys,json; print(json.load(sys.stdin)['access_token'])")
+
+curl -s --noproxy "*" \
+-H "Authorization: Bearer $TOKEN" \
+"https://NOMBRE_VAULT.vault.azure.net/secrets/mensaje-lab?api-version=7.4" \
+| python3 -m json.tool
+
+unset TOKEN</code></pre></div><ol class="steps"><li>Ejecuta el bloque después de cambiar el nombre del almacén.</li><li>Busca en la respuesta JSON la propiedad <code>value</code>.</li><li>Comprueba que corresponde al valor temporal.</li><li>El último comando elimina la variable <code>TOKEN</code> de la sesión actual.</li></ol><div class="expected"><b>Resultado esperado</b><p>Ubuntu obtiene el secreto sin solicitar la contraseña de Azure ni guardar una clave en el script. La autorización proviene de la identidad de la VM y del rol asignado.</p></div></article>
+            <details class="trouble"><summary>La respuesta muestra Forbidden o 403</summary><div><ul><li>Confirma que el rol fue asignado a la <b>identidad administrada de la VM</b>, no a tu usuario.</li><li>El rol correcto para leer es <b>Usuario de secretos de Key Vault</b>.</li><li>Espera hasta 10 minutos y vuelve a solicitar un token nuevo ejecutando todo el bloque.</li><li>Comprueba el nombre del vault y que el acceso público esté permitido para este laboratorio.</li></ul></div></details>
+            <details class="trouble"><summary>No aparece la propiedad value</summary><div><p>Ejecuta primero solo el comando del token y comprueba que la variable no esté vacía con <code>echo &#36;{#TOKEN}</code>; debe devolver un número grande, pero no muestres el token. Revisa también que el secreto se llame exactamente <code>mensaje-lab</code>.</p></div></details>
+            <div class="evidence"><h3>Evidencias de la práctica</h3><label><input id="s6-vault" type="checkbox" data-lab-check> Creé Key Vault con el modelo de permisos RBAC.</label><label><input id="s6-secret" type="checkbox" data-lab-check> Creé un secreto ficticio sin mostrarlo en la evidencia.</label><label><input id="s6-identity" type="checkbox" data-lab-check> Activé la identidad administrada de la VM.</label><label><input id="s6-role" type="checkbox" data-lab-check> Asigné a la VM únicamente el rol de lectura de secretos.</label><label><input id="s6-read" type="checkbox" data-lab-check> Ubuntu recuperó el secreto usando un token.</label><label><input id="s6-clean" type="checkbox" data-lab-check> Eliminé el grupo y desasigné la VM.</label></div>
+            <div class="cleanup"><h3>Limpieza</h3><ol><li>Elimina la asignación de rol de la VM si continuarás usando el vault para otra actividad.</li><li>Elimina <code>rg-lab-keyvault</code>. Key Vault quedará en estado de eliminación temporal durante el período configurado; el nombre seguirá reservado, pero un almacén estándar eliminado temporalmente no genera costo.</li><li>Desasigna la VM. Puedes desactivar su identidad si ninguna otra práctica la utilizará.</li></ol></div>
+            <p class="source-line"><span>FUENTES OFICIALES</span><a href="https://learn.microsoft.com/es-es/azure/key-vault/general/quick-create-portal" target="_blank" rel="noopener">Crear Key Vault ↗</a><a href="https://learn.microsoft.com/es-es/azure/key-vault/general/rbac-guide" target="_blank" rel="noopener">Roles de Key Vault ↗</a><a href="https://learn.microsoft.com/en-us/entra/identity/managed-identities-azure-resources/tutorial-linux-managed-identities-vm-access" target="_blank" rel="noopener">VM Linux e identidad ↗</a></p>
+          </div>
+        </section>
+
+        <section class="lab-section" id="lab-backup">
+          <header class="lab-head"><div class="lab-number">07</div><div><h2>Azure Backup para una máquina virtual</h2><p>Crea un punto de recuperación y aprende por qué proteger datos no es lo mismo que conservar la VM encendida.</p></div></header>
+          <div class="lab-body">
+            <div class="meta-row"><div class="meta"><small>DIFICULTAD</small><b>Media</b></div><div class="meta"><small>TIEMPO</small><b>90–150 minutos</b></div><div class="meta"><small>COSTO</small><b>Consume crédito</b></div><div class="meta"><small>MODALIDAD</small><b>Supervisada</b></div></div>
+            <div class="callout warning"><span>⚠</span><div><h4>Realízala con autorización del instructor</h4><p>Azure Backup almacena datos y puede generar costo aunque la VM esté desasignada. La primera copia también puede tardar. Para una clase grande, conviene trabajar por equipos o hacer una demostración con una sola VM.</p></div></div>
+            <div class="concept-grid"><article class="analogy-card"><h3>Piensa en una fotografía del estado</h3><p>Un punto de recuperación conserva información necesaria para regresar a un estado anterior. No es lo mismo que copiar un único archivo a una memoria USB.</p></article><article class="concept-card"><h3>¿Qué administra el almacén?</h3><p>El almacén de Recovery Services organiza elementos protegidos, directivas, trabajos y puntos de recuperación. La directiva define horario y tiempo de conservación.</p></article></div>
+            <div class="term-list"><div class="term"><b>Directiva</b><span>Horario y retención de los respaldos.</span></div><div class="term"><b>Punto de recuperación</b><span>Estado guardado en una fecha y hora.</span></div><div class="term"><b>Trabajo</b><span>Operación de copia o restauración en ejecución.</span></div><div class="term"><b>Restaurar</b><span>Recuperar archivos, discos o una VM.</span></div></div>
+            <div class="flow"><div><b>VM Ubuntu</b><small>Contiene el sitio</small></div><i>→</i><div><b>Directiva</b><small>Indica cuándo copiar</small></div><i>→</i><div><b>Recovery Services</b><small>Conserva puntos</small></div><i>→</i><div><b>Restauración</b><small>Recupera información</small></div></div>
+
+            <article class="phase">
+              <span>FASE A · CREAR UNA EVIDENCIA EN LA VM</span><h3>Prepara un archivo que pueda identificarse</h3>
+              <ol class="steps"><li>Inicia la VM Ubuntu y conéctate por SSH.</li><li>Ejecuta el bloque. El archivo quedará visible desde el servidor NGINX.</li></ol>
+              <div class="code-box"><header><span>UBUNTU · ARCHIVO DE PRUEBA</span><button class="copy-button">Copiar</button></header><pre><code>echo "Archivo incluido en la practica de Azure Backup" \
+| sudo tee /var/www/html/evidencia-backup.txt
+
+curl http://localhost/evidencia-backup.txt
+date</code></pre></div>
+              <ol class="steps"><li>Desde Windows abre <code>http://IP_PUBLICA/evidencia-backup.txt</code>.</li><li>Guarda una captura con el contenido y la fecha. Este será el archivo que debe existir en el punto de recuperación.</li></ol>
+            </article>
+
+            <article class="phase">
+              <span>FASE B · CREAR EL ALMACÉN</span><h3>Usa la misma región de la máquina virtual</h3>
+              <ol class="steps"><li>En el portal busca <b>Resistencia</b>. En <b>Almacenes</b>, selecciona <b>+ Almacén → Almacén de Recovery Services → Continuar</b>.</li><li>Si esa ruta no aparece, busca directamente <b>Almacenes de Recovery Services</b> y selecciona <b>+ Crear</b>.</li><li>Suscripción: <b>Azure for Students</b>.</li><li>Crea el grupo <code>rg-lab-backup</code>.</li><li>Nombre: <code>rsv-lab-apellido</code>.</li><li>Selecciona exactamente la <b>misma región de la VM</b>.</li><li>Selecciona <b>Revisar y crear → Crear → Ir al recurso</b>.</li></ol>
+              <div class="callout"><span>ℹ</span><div><h4>¿Por qué la misma región?</h4><p>Un almacén que protegerá una VM debe estar en la misma región del origen. El nombre del grupo de recursos no determina la ubicación.</p></div></div>
+            </article>
+
+            <article class="phase">
+              <span>FASE C · CREAR LA DIRECTIVA Y PROTEGER LA VM</span><h3>Define una retención corta para el laboratorio</h3>
+              <ol class="steps"><li>Dentro del almacén selecciona <b>+ Copia de seguridad</b>. También puede aparecer como <b>Backup</b>.</li><li>¿Dónde se ejecuta la carga de trabajo?: <b>Azure</b>.</li><li>¿De qué desea realizar una copia de seguridad?: <b>Máquina virtual</b>.</li><li>Selecciona <b>Copia de seguridad</b> o <b>Continuar</b>.</li><li>En <b>Directiva de copia de seguridad</b>, crea una nueva llamada <code>poliza-lab-diaria</code>.</li><li>Frecuencia: <b>Diaria</b>. Elige una hora que no interfiera con la clase.</li><li>Retención: usa el mínimo permitido por el portal para esta práctica y comprueba el costo estimado.</li><li>En <b>Máquinas virtuales</b>, selecciona <b>Agregar</b> y elige la VM Ubuntu.</li><li>Selecciona <b>Habilitar copia de seguridad</b>.</li></ol>
+              <div class="callout danger"><span>!</span><div><h4>No selecciones todas las máquinas</h4><p>Protege únicamente la VM del laboratorio. Cada elemento protegido y cada dato conservado puede aumentar el consumo.</p></div></div>
+            </article>
+
+            <article class="phase">
+              <span>FASE D · CREAR Y COMPROBAR EL PUNTO</span><h3>Ejecuta una copia de seguridad ahora</h3>
+              <ol class="steps"><li>En el almacén abre <b>Elementos protegidos → Elementos de copia de seguridad</b>.</li><li>Selecciona <b>Máquina virtual de Azure</b> y abre tu VM.</li><li>Selecciona <b>Realizar copia de seguridad ahora</b>.</li><li>En <b>Conservar copia de seguridad hasta</b>, utiliza la fecha mínima razonable indicada por el portal.</li><li>Confirma la operación.</li><li>Abre <b>Trabajos de copia de seguridad</b> y actualiza de forma moderada hasta que el trabajo muestre <b>Completado</b>. No cierres ni elimines los recursos durante la operación.</li><li>Regresa al elemento y abre <b>Vista de puntos de restauración</b>.</li><li>Confirma que aparezca un punto con la fecha y hora de la práctica.</li></ol>
+              <div class="expected"><b>Resultado esperado</b><p>Existe un trabajo completado y al menos un punto de recuperación. Eso demuestra que Azure creó una copia recuperable de la VM.</p></div>
+            </article>
+
+            <article class="phase">
+              <span>FASE E · COMPRENDER LA RESTAURACIÓN</span><h3>Revisa las opciones sin duplicar la VM</h3>
+              <ol class="steps"><li>Selecciona <b>Restaurar VM</b> y elige el punto creado.</li><li>Observa las opciones disponibles: crear una VM nueva, reemplazar discos o restaurar discos, según la configuración.</li><li>No confirmes todavía. Explica qué opción elegirías si la VM original estuviera dañada.</li><li>Para una comprobación completa, el instructor puede crear una VM restaurada con un nombre distinto, verificar <code>evidencia-backup.txt</code> y eliminarla inmediatamente. Esto duplica discos y procesamiento, por lo que no es obligatorio para cada aprendiz.</li><li>Selecciona <b>Cancelar</b> si no se realizará la demostración.</li></ol>
+              <div class="callout warning"><span>⚠</span><div><h4>Un backup sin restauración probada ofrece menos confianza</h4><p>En este nivel se verifica el punto y se estudia el asistente. En un entorno real se programan pruebas de restauración para comprobar que los datos realmente pueden recuperarse.</p></div></div>
+            </article>
+
+            <details class="trouble"><summary>La VM no aparece para seleccionarla</summary><div><ul><li>Confirma que el vault y la VM estén en la misma región.</li><li>Revisa que la VM no esté protegida por otro almacén.</li><li>Actualiza la lista después de esperar unos minutos.</li><li>Comprueba que tienes permisos para habilitar Backup sobre la VM y el vault.</li></ul></div></details>
+            <details class="trouble"><summary>El grupo de recursos no se deja eliminar</summary><div><p>Un almacén no puede eliminarse mientras tenga elementos protegidos, datos de backup o elementos eliminados temporalmente. Primero detén la protección y elige <b>Eliminar datos de copia de seguridad</b>. Azure conserva normalmente esos datos durante 14 días en eliminación temporal; esa retención adicional es gratuita. El vault podrá permanecer visible y bloquear la eliminación del grupo hasta finalizar ese período.</p></div></details>
+
+            <div class="evidence"><h3>Evidencias de la práctica</h3><label><input id="s7-file" type="checkbox" data-lab-check> Creé y comprobé evidencia-backup.txt.</label><label><input id="s7-vault" type="checkbox" data-lab-check> El almacén está en la misma región que la VM.</label><label><input id="s7-policy" type="checkbox" data-lab-check> La directiva protege solamente la VM del laboratorio.</label><label><input id="s7-job" type="checkbox" data-lab-check> El trabajo terminó correctamente.</label><label><input id="s7-point" type="checkbox" data-lab-check> Identifiqué el punto y las opciones de restauración.</label><label><input id="s7-stop" type="checkbox" data-lab-check> Detuve la protección y eliminé los datos al finalizar.</label></div>
+            <div class="cleanup"><h3>Limpieza especial de Backup</h3><ol><li>En <b>Elementos de copia de seguridad → Máquina virtual de Azure</b>, abre la VM.</li><li>Selecciona <b>Detener copia de seguridad</b>.</li><li>En la opción de retención, elige <b>Eliminar datos de copia de seguridad</b>, escribe el nombre exacto y confirma conscientemente. Esta acción elimina la protección.</li><li>Desasigna o elimina la VM según indique el instructor.</li><li>La eliminación temporal conserva gratis los datos eliminados durante 14 días. Anota una fecha para volver y eliminar el vault y <code>rg-lab-backup</code> cuando ya no existan dependencias.</li><li>No desactives protecciones de seguridad del vault solo para acelerar la práctica.</li></ol></div>
+            <p class="source-line"><span>FUENTES OFICIALES</span><a href="https://learn.microsoft.com/es-es/azure/backup/quick-backup-vm-portal" target="_blank" rel="noopener">Respaldar una VM ↗</a><a href="https://learn.microsoft.com/es-es/azure/backup/backup-azure-arm-restore-vms" target="_blank" rel="noopener">Opciones de restauración ↗</a><a href="https://learn.microsoft.com/es-es/azure/backup/soft-delete-azure-backup-faq" target="_blank" rel="noopener">Eliminación temporal ↗</a></p>
+          </div>
+        </section>
+
+        <section class="lab-section" id="lab-rbac">
+          <header class="lab-head"><div class="lab-number">08</div><div><h2>Control de acceso RBAC</h2><p>Entrega a otra persona permiso para observar un grupo de recursos sin poder modificarlo.</p></div></header>
+          <div class="lab-body">
+            <div class="meta-row"><div class="meta"><small>DIFICULTAD</small><b>Media</b></div><div class="meta"><small>TIEMPO</small><b>45–60 minutos</b></div><div class="meta"><small>COSTO</small><b>Sin costo directo</b></div><div class="meta"><small>MODALIDAD</small><b>En parejas</b></div></div>
+            <div class="callout warning"><span>⚠</span><div><h4>Comprueba el directorio de la institución</h4><p>La otra persona debe existir en el mismo directorio de Microsoft Entra o estar invitada como usuario externo. Algunas instituciones bloquean las invitaciones o asignaciones. Si <b>Agregar asignación de roles</b> está deshabilitado, el instructor debe realizar la demostración.</p></div></div>
+            <div class="concept-grid"><article class="analogy-card"><h3>Piensa en las llaves de un edificio</h3><p>Una llave puede abrir la recepción sin abrir las oficinas. El rol Lector permite mirar recursos, pero no crearlos, modificarlos ni eliminarlos.</p></article><article class="concept-card"><h3>Identidad, rol y ámbito</h3><p>Una asignación responde tres preguntas: ¿quién recibe acceso?, ¿qué acciones permite el rol? y ¿sobre qué suscripción, grupo o recurso se aplica?</p></article></div>
+            <div class="term-list"><div class="term"><b>Identidad</b><span>Usuario, grupo, aplicación o recurso.</span></div><div class="term"><b>Rol</b><span>Conjunto de acciones permitidas.</span></div><div class="term"><b>Ámbito</b><span>Lugar donde se aplica el permiso.</span></div><div class="term"><b>Privilegio mínimo</b><span>Entregar únicamente el acceso necesario.</span></div></div>
+            <div class="flow"><div><b>Aprendiz A</b><small>Administra su grupo</small></div><i>→</i><div><b>Rol Lector</b><small>Solo consulta</small></div><i>→</i><div><b>Aprendiz B</b><small>Ve, pero no cambia</small></div></div>
+
+            <article class="phase">
+              <span>FASE A · PREPARAR EL RECURSO Y LA PAREJA</span><h3>Define claramente qué se compartirá</h3>
+              <ol class="steps"><li>Trabaja con un compañero y definan quién será <b>Aprendiz A</b>, propietario de los recursos, y quién será <b>Aprendiz B</b>, lector.</li><li>El Aprendiz A abre un grupo existente que todavía contenga un recurso de práctica, por ejemplo <code>rg-lab-storage</code>. No uses un grupo con datos personales.</li><li>En el grupo abre <b>Control de acceso (IAM) → Ver mi acceso</b>.</li><li>Comprueba que tu cuenta tenga permiso para asignar roles, normalmente <b>Propietario</b> o <b>Administrador de acceso de usuario</b>.</li><li>El Aprendiz B entrega el correo exacto de su cuenta institucional. Nunca entrega su contraseña.</li></ol>
+            </article>
+
+            <article class="phase">
+              <span>FASE B · ASIGNAR EL ROL LECTOR</span><h3>Entrega acceso en el ámbito del grupo</h3>
+              <ol class="steps"><li>En <b>Control de acceso (IAM)</b>, abre <b>Asignaciones de roles</b>.</li><li>Selecciona <b>Agregar → Agregar asignación de roles</b>.</li><li>En la pestaña <b>Rol</b>, busca y selecciona <b>Lector</b>.</li><li>Selecciona <b>Siguiente</b>.</li><li>En <b>Asignar acceso a</b>, elige <b>Usuario, grupo o entidad de servicio</b>.</li><li>Selecciona <b>+ Seleccionar miembros</b>, busca el correo del Aprendiz B y selecciónalo.</li><li>Selecciona <b>Revisar y asignar</b> dos veces.</li><li>Regresa a <b>Asignaciones de roles</b> y filtra por <b>Lector</b> para comprobar el nombre y el ámbito.</li></ol>
+              <div class="expected"><b>Resultado esperado</b><p>Existe una asignación que une al Aprendiz B con el rol Lector en el grupo elegido, no en toda la suscripción.</p></div>
+            </article>
+
+            <article class="phase">
+              <span>FASE C · VERIFICAR LO PERMITIDO Y LO NEGADO</span><h3>Prueba con la cuenta del Aprendiz B</h3>
+              <ol class="steps"><li>El Aprendiz B abre una ventana privada e inicia sesión con su propia cuenta.</li><li>Si tiene varios directorios, abre <b>Directorios y suscripciones</b> y cambia al directorio donde recibió el acceso.</li><li>Busca <b>Grupos de recursos</b> y abre el grupo compartido. La propagación puede tardar algunos minutos.</li><li>Abre los recursos y comprueba que puede ver su información general.</li><li>Intenta iniciar una acción de cambio segura, por ejemplo abrir <b>Etiquetas → Editar</b>. No confirmes si el botón aparece.</li><li>Azure debe negar la modificación o deshabilitar el control porque Lector no incluye acciones de escritura.</li><li>El Aprendiz B cierra sesión. No guarden credenciales en el navegador compartido.</li></ol>
+              <div class="callout success"><span>✓</span><div><h4>Que una acción sea rechazada es un resultado correcto</h4><p>La práctica demuestra que autenticarse y ver un recurso no significa tener permiso para modificarlo.</p></div></div>
+            </article>
+
+            <article class="phase">
+              <span>FASE D · COMPARAR LOS ROLES</span><h3>Explica cuál corresponde a cada trabajo</h3>
+              <table class="field-table"><thead><tr><th>Rol</th><th>Qué permite</th></tr></thead><tbody><tr><td>Lector</td><td>Ver recursos y configuraciones, sin modificarlos.</td></tr><tr><td>Colaborador</td><td>Crear y administrar recursos, pero normalmente no entregar acceso a otros.</td></tr><tr><td>Propietario</td><td>Administrar recursos y también conceder acceso. Debe usarse con mucho cuidado.</td></tr></tbody></table>
+              <p>Escribe una situación para cada rol. Ejemplo: un auditor recibe Lector; un técnico que administra recursos puede recibir Colaborador; el responsable de acceso puede requerir Propietario o un rol más específico.</p>
+            </article>
+
+            <details class="trouble"><summary>No encuentro al compañero por su correo</summary><div><p>Probablemente no pertenece al mismo directorio. Un administrador puede invitarlo como usuario externo desde Microsoft Entra ID, pero algunas instituciones no lo permiten. No cambies de suscripción ni crees usuarios sin autorización; realiza la actividad como demostración guiada.</p></div></details>
+            <details class="trouble"><summary>“Agregar asignación de roles” está deshabilitado</summary><div><p>Tu cuenta puede administrar recursos sin tener permiso para entregar acceso. Abre <b>Ver mi acceso</b>. Necesitas una función que incluya <code>Microsoft.Authorization/roleAssignments/write</code>, como Propietario o Administrador de acceso de usuario.</p></div></details>
+
+            <div class="evidence"><h3>Evidencias de la práctica</h3><label><input id="s8-scope" type="checkbox" data-lab-check> Elegí el grupo de recursos como ámbito.</label><label><input id="s8-role" type="checkbox" data-lab-check> Asigné Lector, no Propietario.</label><label><input id="s8-view" type="checkbox" data-lab-check> La segunda cuenta pudo ver los recursos.</label><label><input id="s8-denied" type="checkbox" data-lab-check> La segunda cuenta no pudo modificarlos.</label><label><input id="s8-remove" type="checkbox" data-lab-check> Retiré la asignación al terminar.</label></div>
+            <div class="cleanup"><h3>Retirar el acceso</h3><ol><li>El Aprendiz A regresa a <b>Control de acceso (IAM) → Asignaciones de roles</b>.</li><li>Busca la asignación del Aprendiz B, selecciónala y pulsa <b>Quitar</b>.</li><li>Confirma conscientemente la eliminación del permiso.</li><li>Elimina el grupo de recursos cuando ya no se use en otras prácticas.</li></ol></div>
+            <p class="source-line"><span>FUENTE OFICIAL</span><a href="https://learn.microsoft.com/es-es/azure/role-based-access-control/quickstart-assign-role-user-portal" target="_blank" rel="noopener">Asignar y quitar roles desde el portal ↗</a></p>
+          </div>
+        </section>
+
+        <section class="capstone" id="proyecto-final">
+          <span class="section-label">RETO INTEGRADOR · NIVEL INICIAL</span>
+          <h2>Un sitio que utiliza varios servicios</h2>
+          <p>El objetivo no es crear una aplicación empresarial completa. Es demostrar que cada servicio cumple una responsabilidad diferente y que la página puede comunicarse con una función.</p>
+          <div class="flow"><div><b>Static Web Apps</b><small>Publica HTML con HTTPS</small></div><i>→</i><div><b>Azure Functions</b><small>Responde JSON</small></div><i>→</i><div><b>SQL Database</b><small>Conserva registros de prueba</small></div><i>+</i><div><b>Blob Storage</b><small>Guarda archivos</small></div></div>
+          <div class="capstone-check">
+            <div><b>1. Página</b><span>Muestra el nombre del proyecto, equipo y propósito.</span></div>
+            <div><b>2. API</b><span>Un botón llama a la función y muestra la respuesta.</span></div>
+            <div><b>3. Datos</b><span>La base contiene una tabla y consultas CRUD comprobadas.</span></div>
+            <div><b>4. Archivos</b><span>Un contenedor privado conserva una evidencia y usa SAS temporal.</span></div>
+            <div><b>5. Seguridad</b><span>Los secretos no aparecen en GitHub, HTML ni capturas.</span></div>
+            <div><b>6. Operación</b><span>Monitor registra una métrica o alerta de la VM.</span></div>
+          </div>
+          <h3>Entrega sugerida</h3>
+          <table class="rubric"><thead><tr><th>Evidencia</th><th>Qué debe demostrar</th><th>Puntos</th></tr></thead><tbody><tr><td>Diagrama</td><td>Nombre y responsabilidad de cada servicio.</td><td>20</td></tr><tr><td>Sitio HTTPS</td><td>Publicación automática desde GitHub.</td><td>20</td></tr><tr><td>API</td><td>Respuesta HTTP 200 y JSON visible en la página.</td><td>20</td></tr><tr><td>Datos y archivo</td><td>Consulta SQL y blob privado con SAS temporal.</td><td>20</td></tr><tr><td>Seguridad y limpieza</td><td>Sin secretos expuestos; recursos eliminados o justificados.</td><td>20</td></tr></tbody></table>
+          <div class="callout warning"><span>⚠</span><div><h4>Límite de este reto</h4><p>El navegador no se conecta directamente a SQL y nunca debe contener su contraseña. Integrar Functions con SQL y Key Vault requiere una práctica posterior de desarrollo y se debe hacer con identidad administrada o configuración segura.</p></div></div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <section class="final-note"><h2>Aprender Azure también es aprender a limpiar</h2><p>Al finalizar cada sesión, revisa <b>Todos los recursos</b>, <b>Grupos de recursos</b>, <b>Administración de costos</b> y el saldo estudiantil. Una evidencia guardada vale más que un recurso olvidado y generando consumo.</p><a class="button secondary" href="index.html">Volver al manual principal</a></section>
+  <footer><div><strong>Azure para estudiantes · Prácticas complementarias</strong><p>Material educativo. No es documentación oficial de Microsoft.</p></div><div>Revisado el 8 de septiembre de 2026 · <a href="https://learn.microsoft.com/es-es/azure/" target="_blank" rel="noopener">Microsoft Learn ↗</a></div></footer>
+
+  <aside class="progress-panel" id="progressPanel" hidden><button class="close" id="closeProgress" aria-label="Cerrar">×</button><h2>Mi progreso</h2><strong id="panelValue">0%</strong><div class="bar"><i id="progressBar"></i></div><p>Las marcas se guardan únicamente en este navegador.</p><button id="resetProgress">Borrar mis marcas</button></aside>
+  <script src="practicas-servicios.js"></script>
+</body>
+</html>
