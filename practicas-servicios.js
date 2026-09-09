@@ -12,7 +12,7 @@ const panelValue=document.querySelector('#panelValue');
 const progressBar=document.querySelector('#progressBar');
 const sideBar=document.querySelector('#sideProgressBar');
 const sideText=document.querySelector('#sideProgressText');
-const storageKey='azure-complementary-labs-v1';
+const storageKey='azure-network-server-labs-v2';
 
 function readProgress(){
   try{return JSON.parse(localStorage.getItem(storageKey))||{}}catch{return {}}

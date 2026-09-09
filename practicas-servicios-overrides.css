@@ -1,0 +1,5 @@
+.meta-row{grid-template-columns:repeat(3,1fr)}
+.eyebrow,.section-label,.lab-number,.route-card span,.meta small,.phase>span,.source-line>span,.side-index>span{font-size:.75rem}
+.route-card small,.flow small{font-size:.75rem}
+
+@media(max-width:700px){.meta-row{grid-template-columns:1fr}}

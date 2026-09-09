@@ -1,6 +1,6 @@
 # Azure for Students · Manual completo
 
-Manual web estático para principiantes, centrado en Azure for Students, control del crédito, conceptos fundamentales y configuración guiada de servicios. Incluye laboratorios completos con Windows Server 2022 e IIS, Ubuntu Server 24.04 LTS y NGINX, acceso remoto seguro, transferencia de sitios por SFTP con Cyberduck y un módulo complementario con ocho prácticas de Storage, Static Web Apps, SQL Database, Functions, Monitor, Key Vault, Backup y RBAC.
+Manual web estático para principiantes, centrado en Azure for Students, control del crédito, conceptos fundamentales y configuración guiada de servicios. Incluye laboratorios completos con Windows Server 2022 e IIS, Ubuntu Server 24.04 LTS y NGINX, acceso remoto seguro, transferencia de sitios por SFTP con Cyberduck y un módulo complementario con ocho prácticas de Blob Storage, Azure Files, NSG y Network Watcher, VNet Peering, Load Balancer, Azure Monitor, instantáneas de discos y RBAC.
 
 ## Publicación en GitHub Pages
 
